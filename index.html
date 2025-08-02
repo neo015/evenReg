@@ -42,11 +42,21 @@
       text-align: center;
       margin-bottom: 20px;
     }
+    #loading {
+      text-align: center;
+      color: #00796B;
+      display: none;
+    }
+    .logo {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
+      <img src="https://yourdomain.com/logo.png" alt="โลโก้ Friday Healthy" class="logo">
       <h2>ลงทะเบียนเข้าร่วม Friday Healthy</h2>
     </div>
     <form id="registerForm">
@@ -56,6 +66,7 @@
       <textarea id="message" placeholder="คุณคาดหวังอะไรจากงานนี้?"></textarea>
       <input type="hidden" id="evenName" value="Friday Healthy" />
       <button type="submit">ลงทะเบียน</button>
+      <div id="loading">📤 กำลังลงทะเบียน...</div>
     </form>
   </div>
 
@@ -72,6 +83,8 @@
 
     document.getElementById("registerForm").addEventListener("submit", async function(e) {
       e.preventDefault();
+      document.querySelector("button").disabled = true;
+      document.getElementById("loading").style.display = "block";
       const profile = await liff.getProfile();
 
       const data = {
@@ -90,10 +103,11 @@
       });
 
       if (response.ok) {
-        alert("✅ ลงทะเบียนสำเร็จ ขอบคุณที่เข้าร่วมกับเรา!");
-        liff.closeWindow();
+        window.location.href = "https://yourdomain.com/success.html";
       } else {
         alert("❌ ลงทะเบียนไม่สำเร็จ กรุณาลองใหม่");
+        document.querySelector("button").disabled = false;
+        document.getElementById("loading").style.display = "none";
       }
     });
 
