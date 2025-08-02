@@ -38,14 +38,15 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
     #loading {
       text-align: center;
       color: #00796B;
       display: none;
+      margin-top: 10px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
     }
     .logo {
       max-width: 100px;
@@ -60,22 +61,20 @@
       <h2>ลงทะเบียนเข้าร่วม Friday Healthy</h2>
     </div>
 
-<form method="POST" action="https://script.google.com/macros/s/AKfycbwG_B6zAYtzqQx65s2ANCNZKw6yG6JDViWmb5-RblTZsHKTqU4IYiTfJ12mgtNUFaQXvg/exec">
-  <input name="name" placeholder="ชื่อ-นามสกุล" required />
-  <input name="email" type="email" placeholder="อีเมล" required />
-  <input name="phone" type="tel" placeholder="เบอร์โทรศัพท์" required />
-  <textarea name="message" placeholder="คุณคาดหวังอะไรจากงานนี้?"></textarea>
-  <input type="hidden" name="evenName" value="Friday Healthy" />
-  <button type="submit">ลงทะเบียน</button>
-</form>
-
-
-    
+    <form id="registerForm">
+      <input id="name" placeholder="ชื่อ-นามสกุล" required />
+      <input id="email" type="email" placeholder="อีเมล" required />
+      <input id="phone" type="tel" placeholder="เบอร์โทรศัพท์" required />
+      <textarea id="message" placeholder="คุณคาดหวังอะไรจากงานนี้?"></textarea>
+      <input type="hidden" id="evenName" value="Friday Healthy" />
+      <button type="submit">ลงทะเบียน</button>
+      <div id="loading">📤 กำลังลงทะเบียน...</div>
+    </form>
   </div>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwG_B6zAYtzqQx65s2ANCNZKw6yG6JDViWmb5-RblTZsHKTqU4IYiTfJ12mgtNUFaQXvg/exec";
+    const scriptUrl = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
 
     async function initLIFF() {
       await liff.init({ liffId: "2007867695-jD3vBbYg" });
@@ -84,51 +83,43 @@
       }
     }
 
-//
-document.getElementById("registerForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  document.querySelector("button").disabled = true;
-  document.getElementById("loading").style.display = "block";
+    document.getElementById("registerForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      document.querySelector("button").disabled = true;
+      document.getElementById("loading").style.display = "block";
 
-  try {
-    await liff.init({ liffId: "2007867695-jD3vBbYg" });
-    if (!liff.isLoggedIn()) {
-      liff.login();
-    }
+      try {
+        const profile = await liff.getProfile();
 
-    const profile = await liff.getProfile();
+        const data = {
+          name: document.getElementById("name").value,
+          email: document.getElementById("email").value,
+          phone: document.getElementById("phone").value,
+          message: document.getElementById("message").value,
+          evenName: document.getElementById("evenName").value,
+          lineId: profile.userId
+        };
 
-    const data = {
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      phone: document.getElementById("phone").value,
-      message: document.getElementById("message").value,
-      evenName: document.getElementById("evenName").value,
-      lineId: profile.userId
-    };
+        const response = await fetch(scriptUrl, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        });
 
-    const response = await fetch("https://script.google.com/macros/s/AKfycbwG_B6zAYtzqQx65s2ANCNZKw6yG6JDViWmb5-RblTZsHKTqU4IYiTfJ12mgtNUFaQXvg/exec", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" }
+        if (response.ok) {
+          alert("✅ ลงทะเบียนเรียบร้อยแล้ว!");
+          liff.closeWindow();
+        } else {
+          alert("❌ ลงทะเบียนไม่สำเร็จ: " + response.status);
+        }
+      } catch (error) {
+        alert("❌ ERROR: " + error.message);
+        console.error(error);
+      } finally {
+        document.querySelector("button").disabled = false;
+        document.getElementById("loading").style.display = "none";
+      }
     });
-
-    if (response.ok) {
-      window.location.href = "https://neo015.github.io/evenReg/success.html";
-    } else {
-      alert("❌ ลงทะเบียนไม่สำเร็จ: " + response.status);
-      document.querySelector("button").disabled = false;
-      document.getElementById("loading").style.display = "none";
-    }
-  } catch (error) {
-    alert("❌ ERROR: " + error.message);
-    console.error("Fetch Error:", error);
-    document.querySelector("button").disabled = false;
-    document.getElementById("loading").style.display = "none";
-  }
-});
-
-
 
     initLIFF();
   </script>
