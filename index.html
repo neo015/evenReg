@@ -2,126 +2,80 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>ลงทะเบียน Friday Healthy</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ลงทะเบียนงานอบรม</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Prompt', sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-      color: #006064;
+      background: #f0f4f8;
       padding: 20px;
     }
     .container {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
       max-width: 480px;
       margin: auto;
-      background: white;
-      border-radius: 15px;
-      padding: 24px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     }
-    input, textarea {
+    input, textarea, button {
       width: 100%;
       padding: 12px;
       margin-top: 10px;
-      margin-bottom: 16px;
+      border: 1px solid #ddd;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      font-size: 1em;
     }
     button {
-      background-color: #00bcd4;
+      background-color: #007aff;
       color: white;
-      padding: 12px;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
-    }
-    #loading {
-      text-align: center;
-      color: #00796B;
-      display: none;
-      margin-top: 10px;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .logo {
-      max-width: 100px;
-      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Zoom-Logo.png" alt="โลโก้ Friday Healthy" class="logo">
-      <h2>ลงทะเบียนเข้าร่วม Friday Healthy</h2>
-    </div>
-
-    <form id="registerForm">
-      <input id="name" placeholder="ชื่อ-นามสกุล" required />
-      <input id="email" type="email" placeholder="อีเมล" required />
-      <input id="phone" type="tel" placeholder="เบอร์โทรศัพท์" required />
-      <textarea id="message" placeholder="คุณคาดหวังอะไรจากงานนี้?"></textarea>
-      <input type="hidden" id="evenName" value="Friday Healthy" />
+    <h2>ลงทะเบียนงานอบรม Friday Healthy</h2>
+    <form id="regForm">
+      <input type="text" placeholder="ชื่อ-นามสกุล" name="name" required>
+      <input type="email" placeholder="อีเมล" name="email" required>
+      <input type="tel" placeholder="เบอร์โทรศัพท์" name="phone" required>
+      <textarea placeholder="คำถาม/ข้อความถึงทีมงาน" name="message"></textarea>
+      <input type="hidden" name="event" value="Friday Healthy">
       <button type="submit">ลงทะเบียน</button>
-      <div id="loading">📤 กำลังลงทะเบียน...</div>
     </form>
   </div>
-
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+    const webhookUrl = 'https://script.google.com/macros/s/AKfycbwG_B6zAYtzqQx65s2ANCNZKw6yG6JDViWmb5-RblTZsHKTqU4IYiTfJ12mgtNUFaQXvg/exec';
+    const userId = 'LINE_USER_ID_PLACEHOLDER'; // แก้ให้ใช้ LIFF ดึง userId จริงในระบบ
 
-    async function initLIFF() {
-      await liff.init({ liffId: "2007867695-jD3vBbYg" });
-      if (!liff.isLoggedIn()) {
-        liff.login();
-      }
-    }
-
-    document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    document.getElementById('regForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      document.querySelector("button").disabled = true;
-      document.getElementById("loading").style.display = "block";
+      const formData = new FormData(e.target);
+      const data = {
+        userId,
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        message: formData.get('message'),
+        event: formData.get('event')
+      };
 
-      try {
-        const profile = await liff.getProfile();
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
 
-        const data = {
-          name: document.getElementById("name").value,
-          email: document.getElementById("email").value,
-          phone: document.getElementById("phone").value,
-          message: document.getElementById("message").value,
-          evenName: document.getElementById("evenName").value,
-          lineId: profile.userId
-        };
-
-        const response = await fetch(scriptUrl, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" }
-        });
-
-        if (response.ok) {
-          alert("✅ ลงทะเบียนเรียบร้อยแล้ว!");
-          liff.closeWindow();
-        } else {
-          alert("❌ ลงทะเบียนไม่สำเร็จ: " + response.status);
-        }
-      } catch (error) {
-        alert("❌ ERROR: " + error.message);
-        console.error(error);
-      } finally {
-        document.querySelector("button").disabled = false;
-        document.getElementById("loading").style.display = "none";
+      if (res.ok) {
+        alert('✅ ลงทะเบียนเรียบร้อย!');
+        location.href = 'https://line.me/R/oaMessage/@yourOAID/?type=flex&msg=ลงทะเบียนสำเร็จ';
+      } else {
+        alert('❌ เกิดข้อผิดพลาด กรุณาลองใหม่');
       }
     });
-
-    initLIFF();
   </script>
 </body>
 </html>
