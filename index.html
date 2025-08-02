@@ -59,15 +59,18 @@
       <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Zoom-Logo.png" alt="โลโก้ Friday Healthy" class="logo">
       <h2>ลงทะเบียนเข้าร่วม Friday Healthy</h2>
     </div>
-    <form id="registerForm">
-      <input type="text" id="name" placeholder="ชื่อ-นามสกุล" required />
-      <input type="email" id="email" placeholder="อีเมล" required />
-      <input type="tel" id="phone" placeholder="เบอร์โทรศัพท์" required />
-      <textarea id="message" placeholder="คุณคาดหวังอะไรจากงานนี้?"></textarea>
-      <input type="hidden" id="evenName" value="Friday Healthy" />
-      <button type="submit">ลงทะเบียน</button>
-      <div id="loading">📤 กำลังลงทะเบียน...</div>
-    </form>
+
+<form method="POST" action="https://script.google.com/macros/s/AKfycbwG_B6zAYtzqQx65s2ANCNZKw6yG6JDViWmb5-RblTZsHKTqU4IYiTfJ12mgtNUFaQXvg/exec">
+  <input name="name" placeholder="ชื่อ-นามสกุล" required />
+  <input name="email" type="email" placeholder="อีเมล" required />
+  <input name="phone" type="tel" placeholder="เบอร์โทรศัพท์" required />
+  <textarea name="message" placeholder="คุณคาดหวังอะไรจากงานนี้?"></textarea>
+  <input type="hidden" name="evenName" value="Friday Healthy" />
+  <button type="submit">ลงทะเบียน</button>
+</form>
+
+
+    
   </div>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
