@@ -19,6 +19,10 @@
       margin: auto;
       box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     }
+    h2 {
+      color: #007aff;
+      margin-bottom: 16px;
+    }
     input, textarea, button {
       width: 100%;
       padding: 12px;
@@ -32,6 +36,10 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #005bb5;
     }
   </style>
 </head>
@@ -49,11 +57,18 @@
   </div>
   <script>
     const webhookUrl = 'https://script.google.com/macros/s/AKfycbwG_B6zAYtzqQx65s2ANCNZKw6yG6JDViWmb5-RblTZsHKTqU4IYiTfJ12mgtNUFaQXvg/exec';
-    const userId = 'LINE_USER_ID_PLACEHOLDER'; // แก้ให้ใช้ LIFF ดึง userId จริงในระบบ
+
+    async function getUserProfile() {
+      await liff.init({ liffId: '1584161252-YXdMKJx4' });
+      if (!liff.isLoggedIn()) liff.login();
+      const profile = await liff.getProfile();
+      return profile.userId;
+    }
 
     document.getElementById('regForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
+      const userId = await getUserProfile();
       const data = {
         userId,
         name: formData.get('name'),
@@ -71,11 +86,12 @@
 
       if (res.ok) {
         alert('✅ ลงทะเบียนเรียบร้อย!');
-        location.href = 'https://line.me/R/oaMessage/@yourOAID/?type=flex&msg=ลงทะเบียนสำเร็จ';
+        location.href = 'https://line.me/R/oaMessage/@vreasyhealthy/?type=flex&msg=ลงทะเบียนสำเร็จ';
       } else {
         alert('❌ เกิดข้อผิดพลาด กรุณาลองใหม่');
       }
     });
   </script>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </body>
 </html>
