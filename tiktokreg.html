@@ -4,9 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ลงทะเบียนเข้าเรียน — TikTok Affiliate + TikTok Shop</title>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
   <!-- LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -27,30 +31,42 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Noto Sans Thai', system-ui, -apple-system, sans-serif; }
-    .gradient-bg { 
+    .gradient-bg {
       background: linear-gradient(135deg, #FF0050 0%, #25F4EE 50%, #06C755 100%);
       animation: gradientShift 6s ease-in-out infinite;
     }
     @keyframes gradientShift {
       0%, 100% { background: linear-gradient(135deg, #FF0050 0%, #25F4EE 50%, #06C755 100%); }
-      50% { background: linear-gradient(135deg, #06C755 0%, #FF0050 50%, #25F4EE 100%); }
+      50%      { background: linear-gradient(135deg, #06C755 0%, #FF0050 50%, #25F4EE 100%); }
     }
-    .form-input:focus { 
+    .form-input:focus {
       box-shadow: 0 0 0 3px rgba(6, 199, 85, 0.1);
       border-color: #06C755;
     }
     .success-animation { animation: successPulse 0.8s ease-out; }
-    @keyframes successPulse { 0% { transform: scale(0.8) rotate(-5deg); opacity: 0; } 50% { transform: scale(1.1) rotate(2deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
-    .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #06C755; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+    @keyframes successPulse {
+      0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
+      50% { transform: scale(1.1) rotate(2deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .loading-spinner {
+      border: 3px solid #f3f3f3; border-top: 3px solid #06C755;
+      border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite;
+    }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .floating-icon { animation: float 3s ease-in-out infinite; }
     @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
     .shake { animation: shake 0.5s ease-in-out; }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-thai">
-  <!-- Header Section -->
+
+  <!-- Header -->
   <div class="gradient-bg text-white py-12 relative overflow-hidden">
     <div class="absolute inset-0 bg-black/10"></div>
     <div class="max-w-2xl mx-auto px-6 relative z-10">
@@ -70,9 +86,10 @@
     </div>
   </div>
 
-  <!-- Main Content -->
+  <!-- Main -->
   <div class="max-w-2xl mx-auto px-6 -mt-10 relative z-10">
-    <!-- Success Message -->
+
+    <!-- Success -->
     <div id="successMessage" class="hidden bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 mb-6 success-animation shadow-lg">
       <div class="flex items-center">
         <div class="flex-shrink-0">
@@ -93,7 +110,7 @@
       </div>
     </div>
 
-    <!-- Error Message -->
+    <!-- Error -->
     <div id="errorMessage" class="hidden bg-red-50 border-2 border-red-200 rounded-2xl p-6 mb-6 shake">
       <div class="flex items-center">
         <div class="flex-shrink-0">
@@ -110,10 +127,10 @@
       </div>
     </div>
 
-    <!-- Registration Form -->
+    <!-- Form -->
     <div class="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
       <form id="regForm" class="space-y-6">
-        <!-- Personal Information Section -->
+        <!-- Personal -->
         <div class="border-b border-gray-200 pb-6">
           <div class="flex items-center mb-4">
             <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
@@ -123,22 +140,22 @@
             </div>
             <h2 class="text-xl font-bold text-gray-900">ข้อมูลส่วนตัว</h2>
           </div>
-          
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-bold text-gray-700 mb-2">
                 ชื่อ-นามสกุล <span class="text-red-500">*</span>
               </label>
-              <input name="name" type="text" required 
+              <input name="name" type="text" required
                      class="form-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-line-green focus:border-line-green transition-all duration-200 bg-gray-50 focus:bg-white"
                      placeholder="กรุณากรอกชื่อ-นามสกุล">
             </div>
-            
+
             <div>
               <label class="block text-sm font-bold text-gray-700 mb-2">
                 เบอร์โทร <span class="text-red-500">*</span>
               </label>
-              <input name="phone" type="tel" required 
+              <input name="phone" type="tel" required
                      class="form-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-line-green focus:border-line-green transition-all duration-200 bg-gray-50 focus:bg-white"
                      placeholder="08X-XXX-XXXX">
             </div>
@@ -146,363 +163,20 @@
 
           <div class="mt-4">
             <label class="block text-sm font-bold text-gray-700 mb-2">อีเมล</label>
-            <input name="email" type="email" 
+            <input name="email" type="email"
                    class="form-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-line-green focus:border-line-green transition-all duration-200 bg-gray-50 focus:bg-white"
                    placeholder="example@email.com">
           </div>
 
           <div class="mt-4">
             <label class="block text-sm font-bold text-gray-700 mb-2">ข้อความถึงโค้ช (ถ้ามี)</label>
-            <textarea name="message" rows="3" 
+            <textarea name="message" rows="3"
                       class="form-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-line-green focus:border-line-green transition-all duration-200 resize-none bg-gray-50 focus:bg-white"
                       placeholder="เล่าปัญหาหรือเป้าหมายสั้น ๆ ได้เลย"></textarea>
           </div>
         </div>
 
-        <!-- Event Information Section -->
+        <!-- Event -->
         <div>
           <div class="flex items-center mb-4">
-            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mr-3">
-              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-              </svg>
-            </div>
-            <h2 class="text-xl font-bold text-gray-900">ข้อมูลอีเวนต์</h2>
-          </div>
-          
-          <div>
-            <label class="block text-sm font-bold text-gray-700 mb-2">ชื่ออีเวนต์</label>
-            <input name="event_name" type="text" 
-                   value="TikTok Academy by Proice"
-                   class="form-input w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-blue-50 text-blue-900 font-semibold"
-                   readonly>
-          </div>
-
-          <div class="mt-4">
-            <label class="block text-sm font-bold text-gray-700 mb-2">วันเวลาเริ่ม</label>
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4">
-              <div class="flex items-center space-x-4">
-                <div class="flex-shrink-0">
-                  <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <p class="font-bold text-blue-900 text-lg">วันอาทิตย์ที่ 24 สิงหาคม 2025</p>
-                  <p class="text-blue-700 font-semibold">เวลา 9:00 - 12:00 น.</p>
-                  <p class="text-blue-600 text-sm mt-1">⏰ ระยะเวลา 3 ชั่วโมงเต็ม</p>
-                </div>
-              </div>
-            </div>
-            <input name="event_datetime_iso" type="hidden" value="2025-08-24T09:00:00+07:00">
-          </div>
-
-          <div class="mt-4">
-            <label class="block text-sm font-bold text-gray-700 mb-2">Zoom Meeting</label>
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4">
-              <div class="flex items-center space-x-4">
-                <div class="flex-shrink-0">
-                  <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="flex-1">
-                  <p class="font-bold text-green-900">🎥 ลิงก์ Zoom พร้อมแล้ว</p>
-                  <a href="https://zoom.us/j/91000797358?pwd=Eq31utueKrgYcm123n7xOBQCPXspsQ.1" 
-                     target="_blank" 
-                     class="text-green-700 hover:text-green-800 text-sm break-all underline font-medium">
-                    เข้าร่วม Zoom Meeting
-                  </a>
-                  <p class="text-green-600 text-xs mt-1">📱 รองรับทั้งมือถือและคอมพิวเตอร์</p>
-                </div>
-              </div>
-            </div>
-            <input name="zoom_link" type="hidden" value="https://zoom.us/j/91000797358?pwd=Eq31utueKrgYcm123n7xOBQCPXspsQ.1">
-          </div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="pt-6">
-          <button type="submit" id="submitBtn"
-                  class="w-full bg-gradient-to-r from-line-green to-line-green-dark hover:from-line-green-dark hover:to-line-green text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] focus:ring-4 focus:ring-line-green/30 flex items-center justify-center shadow-lg hover:shadow-xl">
-            <span id="submitText" class="flex items-center">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              ลงทะเบียนเข้าเรียน
-            </span>
-            <div id="loadingSpinner" class="loading-spinner ml-3 hidden"></div>
-          </button>
-          <div class="text-center mt-4">
-            <p class="text-xs text-gray-500">
-              🔒 การลงทะเบียนนี้ฟรี และข้อมูลของคุณจะถูกเก็บรักษาอย่างปลอดภัย
-            </p>
-            <p class="text-xs text-gray-400 mt-1">
-              คุณจะได้รับการยืนยันทาง LINE หลังจากลงทะเบียนสำเร็จ
-            </p>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- Course Benefits -->
-    <div class="bg-white rounded-2xl shadow-lg p-6 mt-6 border border-gray-100">
-      <div class="text-center mb-6">
-        <h3 class="text-2xl font-bold text-gray-900 mb-2">🎯 สิ่งที่คุณจะได้เรียนรู้</h3>
-        <p class="text-gray-600">เนื้อหาครบครันสำหรับการเริ่มต้นขายผ่าน TikTok</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
-          <div class="flex-shrink-0 w-8 h-8 bg-line-green rounded-full flex items-center justify-center mt-0.5">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>
-          </div>
-          <div>
-            <p class="font-semibold text-gray-800">กลยุทธ์ TikTok Affiliate Marketing</p>
-            <p class="text-sm text-gray-600">เทคนิคการหาสินค้าและการโปรโมท</p>
-          </div>
-        </div>
-        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-          <div class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>
-          </div>
-          <div>
-            <p class="font-semibold text-gray-800">การตั้งค่า TikTok Shop</p>
-            <p class="text-sm text-gray-600">ขั้นตอนการเปิดร้านค้าและจัดการสินค้า</p>
-          </div>
-        </div>
-        <div class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
-          <div class="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mt-0.5">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>
-          </div>
-          <div>
-            <p class="font-semibold text-gray-800">เทคนิคสร้างคอนเทนต์ที่ขายดี</p>
-            <p class="text-sm text-gray-600">วิธีทำวิดีโอให้ไวรัลและขายได้</p>
-          </div>
-        </div>
-        <div class="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
-          <div class="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mt-0.5">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>
-          </div>
-          <div>
-            <p class="font-semibold text-gray-800">การวิเคราะห์และเพิ่มยอดขาย</p>
-            <p class="text-sm text-gray-600">เครื่องมือวัดผลและเพิ่มประสิทธิภาพ</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="text-center py-8 text-gray-500 text-sm mt-8">
-    <div class="max-w-2xl mx-auto px-6">
-      <p class="font-semibold">© 2024 TikTok Academy by Proice. สงวนลิขสิทธิ์.</p>
-      <p class="mt-2">🚀 พัฒนาทักษะการขายออนไลน์ไปกับเรา</p>
-    </div>
-  </footer>
-
-  <script>
-    // ===== CONFIG =====
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRiGdMfctPEvF272NSDgsHiXjPGGK22Tb3fxM-ij1ILRzt65YjGMbz7wRDa290AWp2cQ/exec';
-    const LINE_OA_URL = 'https://lin.ee/LcV49xz';
-    const LIFF_ID = '2007968010-N8KLG18x';
-
-    // ===== LIFF bootstrap (init + login redirect) =====
-    async function bootstrapLiffLogin() {
-      try {
-        await liff.init({ liffId: LIFF_ID });
-
-        if (!liff.isLoggedIn()) {
-          const FLAG = 'liff_login_started';
-          if (!sessionStorage.getItem(FLAG)) {
-            sessionStorage.setItem(FLAG, '1');
-            liff.login({ redirectUri: window.location.href });
-          }
-          return;
-        }
-        sessionStorage.removeItem('liff_login_started');
-
-        // Prefill name from profile
-        const profile = await liff.getProfile();
-        const nameInput = document.querySelector('input[name="name"]');
-        if (nameInput && !nameInput.value) nameInput.value = profile.displayName || '';
-        // keep profile for submit
-        window.__liffProfile = profile;
-
-      } catch (err) {
-        console.error('[LIFF] init/login error:', err);
-        alert('ไม่สามารถเริ่มระบบ LIFF ได้\nโปรดลองรีเฟรช หรือเปิดลิงก์จากในแอป LINE');
-      }
-    }
-
-    // ===== Form validation =====
-    function validateForm(formData) {
-      const name = (formData.get('name') || '').trim();
-      const phoneRaw = (formData.get('phone') || '').trim();
-      if (!name) throw new Error('กรุณากรอกชื่อ-นามสกุล');
-      if (name.length < 2) throw new Error('ชื่อ-นามสกุลต้องมีอย่างน้อย 2 ตัวอักษร');
-      if (!phoneRaw) throw new Error('กรุณากรอกเบอร์โทร');
-      const cleanPhone = phoneRaw.replace(/[-\s]/g, '');
-      const phoneRegex = /^[0-9]{9,10}$/;
-      if (!phoneRegex.test(cleanPhone)) throw new Error('รูปแบบเบอร์โทรไม่ถูกต้อง (ต้องเป็นตัวเลข 9-10 หลัก)');
-      const email = (formData.get('email') || '').trim();
-      if (email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) throw new Error('รูปแบบอีเมลไม่ถูกต้อง');
-      }
-      return { cleanPhone };
-    }
-
-    // ===== UI helpers =====
-    function showError(message) {
-      const errorDiv = document.getElementById('errorMessage');
-      const errorText = document.getElementById('errorText');
-      errorText.textContent = message;
-      errorDiv.classList.remove('hidden');
-      errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(() => errorDiv.classList.add('hidden'), 8000);
-    }
-    function showSuccess(result) {
-      const successDiv = document.getElementById('successMessage');
-      const registrationId = document.getElementById('registrationId');
-      if (result && typeof result.row === 'number') {
-        registrationId.textContent = `✅ บันทึกใน Google Sheet แล้ว (แถวที่ ${result.row})`;
-      }
-      successDiv.classList.remove('hidden');
-      successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    function hideMessages() {
-      document.getElementById('errorMessage').classList.add('hidden');
-      document.getElementById('successMessage').classList.add('hidden');
-    }
-
-    // ===== Phone mask =====
-    document.addEventListener('DOMContentLoaded', () => {
-      const phoneInput = document.querySelector('input[name="phone"]');
-      phoneInput.addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g, '');
-        if (v.length > 10) v = v.slice(0, 10);
-        if (v.length >= 6) v = v.replace(/(\d{3})(\d{3})(\d{0,4})/, '$1-$2-$3');
-        else if (v.length >= 3) v = v.replace(/(\d{3})(\d{0,3})/, '$1-$2');
-        e.target.value = v;
-      });
-
-      // focus effects
-      document.querySelectorAll('.form-input').forEach(input => {
-        input.addEventListener('focus', () => input.parentElement.classList.add('transform', 'scale-[1.02]'));
-        input.addEventListener('blur',  () => input.parentElement.classList.remove('transform', 'scale-[1.02]'));
-      });
-
-      // Init LIFF
-      bootstrapLiffLogin();
-
-      console.log('Registration system initialized');
-      console.log('Google Script URL:', GOOGLE_SCRIPT_URL);
-      console.log('LINE OA URL:', LINE_OA_URL);
-    });
-
-    // ===== Submit handler =====
-    document.getElementById('regForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      hideMessages();
-
-      const submitBtn = document.getElementById('submitBtn');
-      const submitText = document.getElementById('submitText');
-      const loadingSpinner = document.getElementById('loadingSpinner');
-
-      try {
-        // Ensure LIFF login & profile
-        if (!window.liff) throw new Error('LIFF SDK ยังไม่พร้อม');
-        if (!liff.isLoggedIn()) {
-          showError('กรุณาเข้าสู่ระบบ LINE แล้วลองใหม่อีกครั้ง');
-          return;
-        }
-        const profile = window.__liffProfile || await liff.getProfile();
-
-        // UI loading
-        submitBtn.disabled = true;
-        submitText.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>กำลังลงทะเบียน...';
-        loadingSpinner.classList.remove('hidden');
-
-        const formData = new FormData(e.target);
-        const { cleanPhone } = validateForm(formData);
-
-        const payload = {
-          name: (formData.get('name') || '').trim(),
-          phone: cleanPhone,
-          email: (formData.get('email') || '').trim(),
-          message: (formData.get('message') || '').trim(),
-          event_name: formData.get('event_name'),
-          event_datetime_iso: formData.get('event_datetime_iso'),
-          zoom_link: formData.get('zoom_link'),
-          line_user_id: profile.userId,
-          display_name: profile.displayName,
-          picture_url: profile.pictureUrl,
-
-          // optional debug/analytics (ไม่บังคับ เซิร์ฟเวอร์จะเมินถ้าไม่ได้ใช้)
-          timestamp: new Date().toISOString(),
-          user_agent: navigator.userAgent,
-          referrer: document.referrer || 'direct',
-          page_url: window.location.href
-        };
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000);
-
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          const text = await response.text();
-          throw new Error(`เซิร์ฟเวอร์ตอบกลับสถานะ: ${response.status}\n${text}`);
-        }
-
-        const result = await response.json();
-        // เซิร์ฟเวอร์ตอบแบบ { ok:true, row:<number> }
-        if (result.ok) {
-          showSuccess(result);
-          e.target.reset();
-
-          setTimeout(() => {
-            window.open(LINE_OA_URL, '_blank');
-            if (liff.isInClient && liff.isInClient()) {
-              setTimeout(() => liff.closeWindow(), 800);
-            }
-          }, 3000);
-        } else {
-          throw new Error(result.error || 'เกิดข้อผิดพลาดในการลงทะเบียน');
-        }
-
-      } catch (error) {
-        console.error('Registration error:', error);
-        let msg = 'เกิดข้อผิดพลาด: ';
-        if (error.name === 'AbortError') msg += 'การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง';
-        else if (String(error.message || '').includes('Failed to fetch')) msg += 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้';
-        else msg += error.message;
-        showError(msg);
-
-      } finally {
-        submitBtn.disabled = false;
-        submitText.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>ลงทะเบียนเข้าเรียน';
-        loadingSpinner.classList.add('hidden');
-      }
-    });
-  </script>
-</body>
-</html>
+            <div cla
