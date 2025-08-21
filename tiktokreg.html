@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="th">
 <head>
@@ -6,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ลงทะเบียนเข้าเรียน — TikTok Affiliate + TikTok Shop</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -38,41 +39,14 @@
       box-shadow: 0 0 0 3px rgba(6, 199, 85, 0.1);
       border-color: #06C755;
     }
-    .success-animation { 
-      animation: successPulse 0.8s ease-out;
-    }
-    @keyframes successPulse {
-      0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
-      50% { transform: scale(1.1) rotate(2deg); }
-      100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    }
-    .loading-spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #06C755;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .floating-icon {
-      animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-    .shake {
-      animation: shake 0.5s ease-in-out;
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
+    .success-animation { animation: successPulse 0.8s ease-out; }
+    @keyframes successPulse { 0% { transform: scale(0.8) rotate(-5deg); opacity: 0; } 50% { transform: scale(1.1) rotate(2deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+    .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #06C755; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .floating-icon { animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    .shake { animation: shake 0.5s ease-in-out; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
   </style>
 </head>
 <body class="bg-gray-50 font-thai">
@@ -98,7 +72,7 @@
 
   <!-- Main Content -->
   <div class="max-w-2xl mx-auto px-6 -mt-10 relative z-10">
-    <!-- Success Message (Hidden by default) -->
+    <!-- Success Message -->
     <div id="successMessage" class="hidden bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 mb-6 success-animation shadow-lg">
       <div class="flex items-center">
         <div class="flex-shrink-0">
@@ -119,7 +93,7 @@
       </div>
     </div>
 
-    <!-- Error Message (Hidden by default) -->
+    <!-- Error Message -->
     <div id="errorMessage" class="hidden bg-red-50 border-2 border-red-200 rounded-2xl p-6 mb-6 shake">
       <div class="flex items-center">
         <div class="flex-shrink-0">
@@ -339,237 +313,196 @@
   </footer>
 
   <script>
-    // Configuration - Production Ready
+    // ===== CONFIG =====
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRiGdMfctPEvF272NSDgsHiXjPGGK22Tb3fxM-ij1ILRzt65YjGMbz7wRDa290AWp2cQ/exec';
     const LINE_OA_URL = 'https://lin.ee/LcV49xz';
-    const LIFF_ID = '2007867695-jD3vBbYg';
+    const LIFF_ID = '2007968010-N8KLG18x';
 
-    // Form validation
-    function validateForm(formData) {
-      const name = formData.get('name').trim();
-      const phone = formData.get('phone').trim();
-      
-      if (!name) {
-        throw new Error('กรุณากรอกชื่อ-นามสกุล');
-      }
-      
-      if (name.length < 2) {
-        throw new Error('ชื่อ-นามสกุลต้องมีอย่างน้อย 2 ตัวอักษร');
-      }
-      
-      if (!phone) {
-        throw new Error('กรุณากรอกเบอร์โทร');
-      }
-      
-      // Validate phone number format (Thai mobile number)
-      const phoneRegex = /^[0-9]{9,10}$/;
-      const cleanPhone = phone.replace(/[-\s]/g, '');
-      if (!phoneRegex.test(cleanPhone)) {
-        throw new Error('รูปแบบเบอร์โทรไม่ถูกต้อง (ต้องเป็นตัวเลข 9-10 หลัก)');
-      }
-      
-      // Validate email if provided
-      const email = formData.get('email').trim();
-      if (email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          throw new Error('รูปแบบอีเมลไม่ถูกต้อง');
+    // ===== LIFF bootstrap (init + login redirect) =====
+    async function bootstrapLiffLogin() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+
+        if (!liff.isLoggedIn()) {
+          const FLAG = 'liff_login_started';
+          if (!sessionStorage.getItem(FLAG)) {
+            sessionStorage.setItem(FLAG, '1');
+            liff.login({ redirectUri: window.location.href });
+          }
+          return;
         }
+        sessionStorage.removeItem('liff_login_started');
+
+        // Prefill name from profile
+        const profile = await liff.getProfile();
+        const nameInput = document.querySelector('input[name="name"]');
+        if (nameInput && !nameInput.value) nameInput.value = profile.displayName || '';
+        // keep profile for submit
+        window.__liffProfile = profile;
+
+      } catch (err) {
+        console.error('[LIFF] init/login error:', err);
+        alert('ไม่สามารถเริ่มระบบ LIFF ได้\nโปรดลองรีเฟรช หรือเปิดลิงก์จากในแอป LINE');
       }
-      
-      return true;
     }
 
-    // Show error message
+    // ===== Form validation =====
+    function validateForm(formData) {
+      const name = (formData.get('name') || '').trim();
+      const phoneRaw = (formData.get('phone') || '').trim();
+      if (!name) throw new Error('กรุณากรอกชื่อ-นามสกุล');
+      if (name.length < 2) throw new Error('ชื่อ-นามสกุลต้องมีอย่างน้อย 2 ตัวอักษร');
+      if (!phoneRaw) throw new Error('กรุณากรอกเบอร์โทร');
+      const cleanPhone = phoneRaw.replace(/[-\s]/g, '');
+      const phoneRegex = /^[0-9]{9,10}$/;
+      if (!phoneRegex.test(cleanPhone)) throw new Error('รูปแบบเบอร์โทรไม่ถูกต้อง (ต้องเป็นตัวเลข 9-10 หลัก)');
+      const email = (formData.get('email') || '').trim();
+      if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) throw new Error('รูปแบบอีเมลไม่ถูกต้อง');
+      }
+      return { cleanPhone };
+    }
+
+    // ===== UI helpers =====
     function showError(message) {
       const errorDiv = document.getElementById('errorMessage');
       const errorText = document.getElementById('errorText');
-      
       errorText.textContent = message;
       errorDiv.classList.remove('hidden');
       errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // Hide error after 8 seconds
-      setTimeout(() => {
-        errorDiv.classList.add('hidden');
-      }, 8000);
+      setTimeout(() => errorDiv.classList.add('hidden'), 8000);
     }
-
-    // Show success message
-    function showSuccess(registrationData) {
+    function showSuccess(result) {
       const successDiv = document.getElementById('successMessage');
       const registrationId = document.getElementById('registrationId');
-      
-      if (registrationData && registrationData.rowNumber) {
-        registrationId.textContent = `✅ บันทึกใน Google Sheet แล้ว (แถวที่ ${registrationData.rowNumber})`;
+      if (result && typeof result.row === 'number') {
+        registrationId.textContent = `✅ บันทึกใน Google Sheet แล้ว (แถวที่ ${result.row})`;
       }
-      
       successDiv.classList.remove('hidden');
       successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-
-    // Hide messages
     function hideMessages() {
       document.getElementById('errorMessage').classList.add('hidden');
       document.getElementById('successMessage').classList.add('hidden');
     }
 
-    // Format Thai date
-    function formatThaiDate(isoString) {
-      const date = new Date(isoString);
-      const thaiMonths = [
-        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-      ];
-      const thaiDays = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
-      
-      return `วัน${thaiDays[date.getDay()]}ที่ ${date.getDate()} ${thaiMonths[date.getMonth()]} ${date.getFullYear() + 543}`;
-    }
+    // ===== Phone mask =====
+    document.addEventListener('DOMContentLoaded', () => {
+      const phoneInput = document.querySelector('input[name="phone"]');
+      phoneInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 10) v = v.slice(0, 10);
+        if (v.length >= 6) v = v.replace(/(\d{3})(\d{3})(\d{0,4})/, '$1-$2-$3');
+        else if (v.length >= 3) v = v.replace(/(\d{3})(\d{0,3})/, '$1-$2');
+        e.target.value = v;
+      });
 
-    // Form submission handler
+      // focus effects
+      document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('focus', () => input.parentElement.classList.add('transform', 'scale-[1.02]'));
+        input.addEventListener('blur',  () => input.parentElement.classList.remove('transform', 'scale-[1.02]'));
+      });
+
+      // Init LIFF
+      bootstrapLiffLogin();
+
+      console.log('Registration system initialized');
+      console.log('Google Script URL:', GOOGLE_SCRIPT_URL);
+      console.log('LINE OA URL:', LINE_OA_URL);
+    });
+
+    // ===== Submit handler =====
     document.getElementById('regForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+      hideMessages();
+
       const submitBtn = document.getElementById('submitBtn');
       const submitText = document.getElementById('submitText');
       const loadingSpinner = document.getElementById('loadingSpinner');
-      
-      // Hide previous messages
-      hideMessages();
-      
+
       try {
-        // Show loading state
+        // Ensure LIFF login & profile
+        if (!window.liff) throw new Error('LIFF SDK ยังไม่พร้อม');
+        if (!liff.isLoggedIn()) {
+          showError('กรุณาเข้าสู่ระบบ LINE แล้วลองใหม่อีกครั้ง');
+          return;
+        }
+        const profile = window.__liffProfile || await liff.getProfile();
+
+        // UI loading
         submitBtn.disabled = true;
         submitText.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>กำลังลงทะเบียน...';
         loadingSpinner.classList.remove('hidden');
-        
+
         const formData = new FormData(e.target);
-        
-        // Validate form
-        validateForm(formData);
-        
-        // Prepare data for Google Script
-        const data = {
-          name: formData.get('name').trim(),
-          phone: formData.get('phone').trim().replace(/[-\s]/g, ''), // Clean phone number
-          email: formData.get('email').trim(),
-          message: formData.get('message').trim(),
+        const { cleanPhone } = validateForm(formData);
+
+        const payload = {
+          name: (formData.get('name') || '').trim(),
+          phone: cleanPhone,
+          email: (formData.get('email') || '').trim(),
+          message: (formData.get('message') || '').trim(),
           event_name: formData.get('event_name'),
           event_datetime_iso: formData.get('event_datetime_iso'),
-          event_datetime_thai: formatThaiDate(formData.get('event_datetime_iso')),
           zoom_link: formData.get('zoom_link'),
+          line_user_id: profile.userId,
+          display_name: profile.displayName,
+          picture_url: profile.pictureUrl,
+
+          // optional debug/analytics (ไม่บังคับ เซิร์ฟเวอร์จะเมินถ้าไม่ได้ใช้)
           timestamp: new Date().toISOString(),
           user_agent: navigator.userAgent,
           referrer: document.referrer || 'direct',
           page_url: window.location.href
         };
 
-        console.log('Sending registration data:', data);
-
-        // Send to Google Script with timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
 
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
           signal: controller.signal
         });
-
         clearTimeout(timeoutId);
-        console.log('Response status:', response.status);
-        
+
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Response error:', errorText);
-          throw new Error(`เซิร์ฟเวอร์ตอบกลับด้วยสถานะ: ${response.status}\n${errorText}`);
+          const text = await response.text();
+          throw new Error(`เซิร์ฟเวอร์ตอบกลับสถานะ: ${response.status}\n${text}`);
         }
 
         const result = await response.json();
-        console.log('Registration response:', result);
-
-        if (result.success) {
-          // Show success message
+        // เซิร์ฟเวอร์ตอบแบบ { ok:true, row:<number> }
+        if (result.ok) {
           showSuccess(result);
-          
-          // Reset form
           e.target.reset();
-          
-          // Redirect to LINE OA after 3 seconds
+
           setTimeout(() => {
-            console.log('Redirecting to LINE OA:', LINE_OA_URL);
             window.open(LINE_OA_URL, '_blank');
-            
-            // Try to close LIFF window if in LINE app
-            if (window.liff && window.liff.isInClient && window.liff.isInClient()) {
-              setTimeout(() => window.liff.closeWindow(), 1000);
+            if (liff.isInClient && liff.isInClient()) {
+              setTimeout(() => liff.closeWindow(), 800);
             }
           }, 3000);
-          
         } else {
           throw new Error(result.error || 'เกิดข้อผิดพลาดในการลงทะเบียน');
         }
-        
+
       } catch (error) {
         console.error('Registration error:', error);
-        
-        let errorMessage = 'เกิดข้อผิดพลาด: ';
-        
-        if (error.name === 'AbortError') {
-          errorMessage += 'การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง';
-        } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-          errorMessage += 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้\n\nกรุณาตรวจสอบ:\n• การเชื่อมต่ออินเทอร์เน็ต\n• Google Script URL ถูกต้องหรือไม่\n• Web App ได้รับการ Deploy แล้วหรือไม่';
-        } else if (error.message.includes('CORS')) {
-          errorMessage += 'ปัญหาการเชื่อมต่อ CORS\nกรุณาตรวจสอบการตั้งค่า Google Script';
-        } else {
-          errorMessage += error.message;
-        }
-        
-        showError(errorMessage);
-        
+        let msg = 'เกิดข้อผิดพลาด: ';
+        if (error.name === 'AbortError') msg += 'การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง';
+        else if (String(error.message || '').includes('Failed to fetch')) msg += 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้';
+        else msg += error.message;
+        showError(msg);
+
       } finally {
-        // Reset button state
         submitBtn.disabled = false;
         submitText.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>ลงทะเบียนเข้าเรียน';
         loadingSpinner.classList.add('hidden');
       }
     });
-
-    // Phone number formatting
-    document.querySelector('input[name="phone"]').addEventListener('input', (e) => {
-      let value = e.target.value.replace(/\D/g, '');
-      if (value.length > 10) value = value.slice(0, 10);
-      
-      if (value.length >= 6) {
-        value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-      } else if (value.length >= 3) {
-        value = value.replace(/(\d{3})(\d+)/, '$1-$2');
-      }
-      
-      e.target.value = value;
-    });
-
-    // Add input focus effects
-    document.querySelectorAll('.form-input').forEach(input => {
-      input.addEventListener('focus', () => {
-        input.parentElement.classList.add('transform', 'scale-[1.02]');
-      });
-      
-      input.addEventListener('blur', () => {
-        input.parentElement.classList.remove('transform', 'scale-[1.02]');
-      });
-    });
-
-    // Initialize page
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('Registration system initialized');
-      console.log('Google Script URL:', GOOGLE_SCRIPT_URL);
-      console.log('LINE OA URL:', LINE_OA_URL);
-    });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'972353df64c337e2',t:'MTc1NTcwNzk3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
